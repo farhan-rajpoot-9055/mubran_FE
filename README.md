@@ -24,7 +24,7 @@ Build for production: `npm run build` (outputs to `dist/`). Preview: `npm run pr
 | `VITE_APP_URL` | Public site URL used for WhatsApp share links (defaults to current origin) |
 | `VITE_WHATSAPP_NUMBER` | Fallback WhatsApp number (country code + digits) |
 
-These are baked in at build time, so on Netlify you set them under **Site → Environment variables** before each build.
+These are baked in at build time, so on Vercel you set them under **Project → Settings → Environment Variables** before each build.
 
 ## Pages & routes
 
@@ -60,13 +60,12 @@ public/
   sitemap.xml              # replace STORE_DOMAIN with your domain
 ```
 
-## Deploying to Netlify
+## Deploying to Vercel
 
-1. Push the frontend to a repository (or drag `dist/` into the Netlify UI).
-2. Build command: `npm run build`, publish directory: `dist`.
-3. Set `VITE_API_URL` and `VITE_APP_URL`.
-4. For SPA routing, add a Netlify Redirect (Netlify does this automatically for React; if needed create `public/_redirects`):
-   `/* /index.html 200`
+1. Push the frontend to a repository and import it in Vercel (or run `vercel` from this directory).
+2. Framework preset: Vite. Build command: `npm run build`, output directory: `dist` (already configured in `vercel.json`).
+3. Set `VITE_API_URL`, `VITE_APP_URL` and `VITE_WHATSAPP_NUMBER` as Environment Variables.
+4. SPA routing is handled by the rewrite rule in `vercel.json` (`/* → /index.html`).
 
 > For dynamic SEO (per-product meta etc.) the site uses client-side `<head>` updates; submit `/sitemap.xml` in Search Console after replacing `STORE_DOMAIN`.
 
