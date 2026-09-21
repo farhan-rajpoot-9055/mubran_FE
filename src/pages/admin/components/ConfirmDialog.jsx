@@ -1,6 +1,14 @@
+import { useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 export function ConfirmDialog({ open, title, text, confirmLabel = 'Delete', onConfirm, onCancel, busy }) {
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
   return (
     <div className={`confirm ${open ? 'is-open' : ''}`} role="dialog" aria-modal="true" aria-label={title}>
       <button type="button" className="confirm__backdrop" aria-label="Cancel" onClick={onCancel} />

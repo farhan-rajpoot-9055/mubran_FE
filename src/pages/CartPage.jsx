@@ -43,21 +43,21 @@ export default function CartPage() {
             action={<Link to="/shop" className="btn btn--primary">Start Shopping <ArrowRight size={16} /></Link>}
           />
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }} className="cart-layout">
+          <div className="cart-layout">
             <div className="panel">
               {cart.map((it) => {
                 const price = it.salePrice && it.salePrice < it.price ? it.salePrice : it.price;
                 return (
-                  <div className="cart-item" key={it.slug} style={{ gridTemplateColumns: '90px 1fr auto', padding: '1.1rem 1.3rem' }}>
+                  <div className="cart-item" key={it.slug}>
                     <Link to={`/products/${it.slug}`}>
                       {it.image ? (
-                        <img src={resolveImageUrl(it.image)} alt={it.name} className="cart-item__img" style={{ width: 90, height: 112 }} loading="lazy" />
+                        <img src={resolveImageUrl(it.image)} alt={it.name} className="cart-item__img" loading="lazy" />
                       ) : (
-                        <div className="cart-item__img skeleton" style={{ width: 90, height: 112 }} />
+                        <div className="cart-item__img skeleton" />
                       )}
                     </Link>
                     <div>
-                      <Link to={`/products/${it.slug}`} className="cart-item__name" style={{ fontSize: '1.02rem' }}>{it.name}</Link>
+                      <Link to={`/products/${it.slug}`} className="cart-item__name">{it.name}</Link>
                       <div className="cart-item__sku">{it.sku}</div>
                       <div className="cart-item__price">
                         {formatPrice(price, currency)} {currency}
@@ -79,7 +79,7 @@ export default function CartPage() {
                         </div>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.6rem' }}>
+                    <div className="cart-item__third-col">
                       <strong style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem' }}>
                         {formatPrice(price * it.quantity, currency)}
                       </strong>

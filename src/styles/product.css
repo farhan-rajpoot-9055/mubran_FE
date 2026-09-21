@@ -133,6 +133,29 @@
   color: var(--danger);
 }
 
+.product-info__wish-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all var(--transition);
+  touch-action: manipulation;
+}
+
+.product-info__wish-btn:hover,
+.product-info__wish-btn.is-wished {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 .product-info__price {
   display: flex;
   align-items: baseline;
@@ -242,18 +265,30 @@
   }
 
   .gallery--mobile .swiper {
-    height: min(78vw, 460px);
+    width: 100%;
+    height: min(80vw, 480px);
+    display: block;
+  }
+
+  .gallery--mobile .swiper-wrapper {
+    align-items: stretch;
   }
 
   .gallery--mobile .swiper-slide {
-    display: grid;
-    place-items: center;
+    width: 100% !important;
+    height: min(80vw, 480px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--surface-2);
   }
 
-  .gallery--mobile img {
+  .gallery--mobile .swiper-slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
   .gallery--mobile .gallery-thumbs-carousel {
@@ -319,30 +354,46 @@
   .buy-row {
     flex-direction: column;
     gap: 0.6rem;
+    align-items: stretch;
   }
 
   .buy-row .qty {
     width: 100%;
-    justify-content: center;
+    display: flex;
     height: 48px;
+    border-radius: var(--r-sm);
   }
 
   .buy-row .qty button {
-    flex: 1;
+    flex: 0 0 48px;
+    width: 48px;
     height: 48px;
+  }
+
+  .buy-row .qty__val {
+    flex: 1;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
   }
 
   .buy-row .btn {
     flex: none;
     width: 100%;
     height: 48px;
+    min-width: 0;
   }
 
   .product-info__shipping {
     font-size: 0.84rem;
   }
 
-  .gallery--mobile .swiper {
+  .gallery--mobile .swiper,
+  .gallery--mobile .swiper-slide {
     height: 85vw;
   }
 }
@@ -446,6 +497,7 @@
 @media (max-width: 480px) {
   .quickview {
     padding: 0.5rem;
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
     align-items: flex-end;
   }
 

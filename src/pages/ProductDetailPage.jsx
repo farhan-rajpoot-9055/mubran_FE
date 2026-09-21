@@ -202,13 +202,18 @@ export default function ProductDetailPage() {
             <Swiper
               modules={[Pagination]}
               pagination={{ clickable: true }}
-              spaceBetween={8}
+              spaceBetween={0}
               onSlideChange={(s) => setActiveImage(s.activeIndex)}
               initialSlide={activeImage}
+              style={{ width: '100%' }}
             >
               {images.map((img, i) => (
-                <SwiperSlide key={img}>
-                  <img src={resolveImageUrl(img)} alt={`${product.name} view ${i + 1}`} />
+                <SwiperSlide key={img} style={{ width: '100%' }}>
+                  <img
+                    src={resolveImageUrl(img)}
+                    alt={`${product.name} view ${i + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
                 </SwiperSlide>
               ))}
               {!images.length && (
@@ -220,7 +225,7 @@ export default function ProductDetailPage() {
               )}
             </Swiper>
             {images.length > 1 && (
-              <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.8rem 1rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.8rem 1rem', WebkitOverflowScrolling: 'touch' }}>
                 {images.map((img, i) => (
                   <button
                     type="button"
@@ -233,10 +238,11 @@ export default function ProductDetailPage() {
                       borderRadius: 5,
                       overflow: 'hidden',
                       flexShrink: 0,
-                      border: `2px solid ${i === activeImage ? 'var(--primary)' : 'transparent'}`,
+                      border: `2px solid ${i === activeImage ? 'var(--primary)' : 'var(--line)'}`,
+                      background: 'var(--surface-2)',
                     }}
                   >
-                    <img src={resolveImageUrl(img)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={resolveImageUrl(img)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                   </button>
                 ))}
               </div>
@@ -265,8 +271,7 @@ export default function ProductDetailPage() {
 
               <button
                 type="button"
-                className={`product-card__wish ${wished ? 'is-wished' : ''}`}
-                style={{ position: 'static', boxShadow: 'none', border: '1px solid var(--line)' }}
+                className={`product-info__wish-btn ${wished ? 'is-wished' : ''}`}
                 aria-pressed={wished}
                 onClick={() => toggleWishlist(product.slug)}
               >

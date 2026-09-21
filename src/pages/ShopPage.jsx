@@ -35,6 +35,13 @@ export default function ShopPage() {
   const [quickView, setQuickView] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
+
   const q = params.get('q') || '';
   const category = params.get('category') || '';
   const minPrice = params.get('min') || '';

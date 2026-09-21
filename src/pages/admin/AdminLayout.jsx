@@ -44,6 +44,13 @@ export default function AdminLayout() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
   const onLogout = () => {
     logout();
     toast.success('Signed out');
@@ -108,14 +115,6 @@ export default function AdminLayout() {
 
       <div className="admin-main">
         <header className="admin-topbar">
-          <button
-            type="button"
-            className="icon-btn"
-            aria-label="Toggle sidebar"
-            style={{ display: 'none' }}
-          >
-            <Menu size={20} />
-          </button>
           <button
             type="button"
             className="icon-btn"

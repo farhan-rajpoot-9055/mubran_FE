@@ -78,7 +78,7 @@ export function CartDrawer() {
                       <button
                         type="button"
                         className="icon-btn"
-                        style={{ width: 32, height: 32 }}
+                        style={{ width: 36, height: 36 }}
                         aria-label={`Remove ${it.name}`}
                         onClick={() => removeFromCart(it.slug)}
                       >
