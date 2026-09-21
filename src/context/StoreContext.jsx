@@ -43,10 +43,33 @@ export const applyTheme = (theme) => {
     const value = theme[key];
     if (HEX_COLOR_RE.test(String(value || ''))) root.setProperty(cssVar, hexToRgbTriplet(value));
   }
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeColorMeta && HEX_COLOR_RE.test(String(theme.primary || ''))) {
+    themeColorMeta.setAttribute('content', theme.primary);
+  }
+};
+
+// Cached by index.html's inline anti-flash script too — keep the key in sync.
+const CACHE_KEY = 'ams_store_cache';
+
+const readCache = () => {
+  try {
+    return JSON.parse(localStorage.getItem(CACHE_KEY));
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (data) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {
+    /* ignore (storage disabled/full) */
+  }
 };
 
 export const StoreProvider = ({ children }) => {
-  const [store, setStore] = useState(null);
+  const [store, setStore] = useState(readCache);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -58,6 +81,7 @@ export const StoreProvider = ({ children }) => {
         if (mounted) {
           setStore(res.data);
           applyTheme(res.data?.theme);
+          writeCache(res.data);
         }
       })
       .catch((e) => {
@@ -65,6 +89,7 @@ export const StoreProvider = ({ children }) => {
       })
       .finally(() => {
         if (mounted) setLoading(false);
+        window.__hideAppLoader?.();
       });
     return () => {
       mounted = false;
