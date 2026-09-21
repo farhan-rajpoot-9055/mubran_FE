@@ -3,7 +3,7 @@ import { X, ShoppingBag, MessageCircle, Trash2, Plus, Minus } from 'lucide-react
 import { useCart } from '../../context/CartContext.jsx';
 import { useStore } from '../../context/StoreContext.jsx';
 import { formatPrice } from '../../utils/format.js';
-import { resolveImageUrl } from '../../api/apiClient.js';
+import { CartItemThumb } from '../common/CartItemThumb.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 
 export function CartDrawer() {
@@ -49,75 +49,70 @@ export function CartDrawer() {
               </Link>
             </div>
           ) : (
-            cart.map((it) => {
-              const price = it.salePrice && it.salePrice < it.price ? it.salePrice : it.price;
-              return (
-                <div className="cart-item" key={it.slug}>
-                  <Link to={`/products/${it.slug}`} onClick={() => setIsOpen(false)}>
-                    {it.image ? (
-                      <img src={resolveImageUrl(it.image)} alt={it.name} className="cart-item__img" loading="lazy" />
-                    ) : (
-                      <div className="cart-item__img skeleton" />
-                    )}
-                  </Link>
-                  <div>
-                    <Link to={`/products/${it.slug}`} onClick={() => setIsOpen(false)} className="cart-item__name">
-                      {it.name}
+            <>
+              {cart.map((it) => {
+                const price = it.salePrice && it.salePrice < it.price ? it.salePrice : it.price;
+                return (
+                  <div className="cart-item" key={it.slug}>
+                    <Link to={`/products/${it.slug}`} onClick={() => setIsOpen(false)}>
+                      <CartItemThumb image={it.image} alt={it.name} />
                     </Link>
-                    <div className="cart-item__sku">{it.sku}</div>
-                    <div className="cart-item__actions">
-                      <div className="qty" aria-label="Quantity">
-                        <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(it.slug, it.quantity - 1)}>
-                          <Minus size={13} />
-                        </button>
-                        <span className="qty__val">{it.quantity}</span>
-                        <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(it.slug, it.quantity + 1)}>
-                          <Plus size={13} />
+                    <div>
+                      <Link to={`/products/${it.slug}`} onClick={() => setIsOpen(false)} className="cart-item__name">
+                        {it.name}
+                      </Link>
+                      <div className="cart-item__sku">{it.sku}</div>
+                      <div className="cart-item__actions">
+                        <div className="qty" aria-label="Quantity">
+                          <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(it.slug, it.quantity - 1)}>
+                            <Minus size={13} />
+                          </button>
+                          <span className="qty__val">{it.quantity}</span>
+                          <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(it.slug, it.quantity + 1)}>
+                            <Plus size={13} />
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          className="icon-btn"
+                          style={{ width: 36, height: 36 }}
+                          aria-label={`Remove ${it.name}`}
+                          onClick={() => removeFromCart(it.slug)}
+                        >
+                          <Trash2 size={15} />
                         </button>
                       </div>
-                      <button
-                        type="button"
-                        className="icon-btn"
-                        style={{ width: 36, height: 36 }}
-                        aria-label={`Remove ${it.name}`}
-                        onClick={() => removeFromCart(it.slug)}
-                      >
-                        <Trash2 size={15} />
-                      </button>
                     </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div className="cart-item__price">
-                      {formatPrice(price * it.quantity, currency)} {currency}
-                    </div>
-                    {it.salePrice && it.salePrice < it.price && (
-                      <div className="text-muted" style={{ fontSize: '0.72rem', textDecoration: 'line-through' }}>
-                        {formatPrice(it.price * it.quantity, currency)}
+                    <div style={{ textAlign: 'right' }}>
+                      <div className="cart-item__price">
+                        {formatPrice(price * it.quantity, currency)} {currency}
                       </div>
-                    )}
+                      {it.salePrice && it.salePrice < it.price && (
+                        <div className="text-muted" style={{ fontSize: '0.72rem', textDecoration: 'line-through' }}>
+                          {formatPrice(it.price * it.quantity, currency)}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                );
+              })}
+              <div className="drawer__foot">
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.9rem' }}>
+                  <span style={{ fontWeight: 600 }}>Estimated Subtotal</span>
+                  <span style={{ fontWeight: 700, fontFamily: 'var(--font-display)', fontSize: '1.1rem' }}>
+                    {formatPrice(subtotal, currency)} {currency}
+                  </span>
                 </div>
-              );
-            })
+                <button type="button" className="btn btn--whatsapp btn--block" onClick={onOrder}>
+                  <MessageCircle size={17} /> Order via WhatsApp
+                </button>
+                <Link to="/cart" className="btn btn--outline btn--block" style={{ marginTop: '0.6rem' }} onClick={() => setIsOpen(false)}>
+                  View Full Cart
+                </Link>
+              </div>
+            </>
           )}
         </div>
-
-        {cart.length > 0 && (
-          <div className="drawer__foot">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.9rem' }}>
-              <span style={{ fontWeight: 600 }}>Estimated Subtotal</span>
-              <span style={{ fontWeight: 700, fontFamily: 'var(--font-display)', fontSize: '1.1rem' }}>
-                {formatPrice(subtotal, currency)} {currency}
-              </span>
-            </div>
-            <button type="button" className="btn btn--whatsapp btn--block" onClick={onOrder}>
-              <MessageCircle size={17} /> Order via WhatsApp
-            </button>
-            <Link to="/cart" className="btn btn--outline btn--block" style={{ marginTop: '0.6rem' }} onClick={() => setIsOpen(false)}>
-              View Full Cart
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   );

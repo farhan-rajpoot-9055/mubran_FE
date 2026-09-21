@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Eye, ImageOff } from 'lucide-react';
 import { useCart } from '../../context/CartContext.jsx';
@@ -9,13 +10,14 @@ export function ProductCard({ product, currency = 'PKR', onQuickView }) {
   const wished = isWishlisted(product.slug);
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const cover = resolveImageUrl(product.images?.[0]);
+  const [imgFailed, setImgFailed] = useState(false);
 
   const currentPrice = hasDiscount ? product.salePrice : product.price;
 
   return (
     <article className="product-card">
       <Link to={`/products/${product.slug}`} className="product-card__media" aria-label={product.name}>
-        {cover ? (
+        {cover && !imgFailed ? (
           <img
             src={cover}
             alt={product.altText || product.name}
@@ -24,6 +26,7 @@ export function ProductCard({ product, currency = 'PKR', onQuickView }) {
             decoding="async"
             width="400"
             height="500"
+            onError={() => setImgFailed(true)}
           />
         ) : (
           <span className="product-card__img product-card__img--placeholder">

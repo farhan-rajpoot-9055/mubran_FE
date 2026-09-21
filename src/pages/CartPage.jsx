@@ -4,9 +4,9 @@ import { useCart } from '../context/CartContext.jsx';
 import { useStore } from '../context/StoreContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { formatPrice } from '../utils/format.js';
-import { resolveImageUrl } from '../api/apiClient.js';
 import { Seo } from '../components/common/Seo.jsx';
 import { EmptyState } from '../components/common/EmptyState.jsx';
+import { CartItemThumb } from '../components/common/CartItemThumb.jsx';
 
 export default function CartPage() {
   const { cart, subtotal, setQuantity, removeFromCart, clearCart, orderOnWhatsApp } = useCart();
@@ -50,11 +50,7 @@ export default function CartPage() {
                 return (
                   <div className="cart-item" key={it.slug}>
                     <Link to={`/products/${it.slug}`}>
-                      {it.image ? (
-                        <img src={resolveImageUrl(it.image)} alt={it.name} className="cart-item__img" loading="lazy" />
-                      ) : (
-                        <div className="cart-item__img skeleton" />
-                      )}
+                      <CartItemThumb image={it.image} alt={it.name} />
                     </Link>
                     <div>
                       <Link to={`/products/${it.slug}`} className="cart-item__name">{it.name}</Link>
