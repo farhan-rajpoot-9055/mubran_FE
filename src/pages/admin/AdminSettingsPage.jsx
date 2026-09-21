@@ -4,14 +4,95 @@ import api from '../../api/apiClient.js';
 import { useToast } from '../../context/ToastContext.jsx';
 import { ConfirmDialog } from './components/ConfirmDialog.jsx';
 import ImageUploader from './components/ImageUploader.jsx';
+import { HEX_COLOR_RE, applyTheme } from '../../context/StoreContext.jsx';
 
 const TABS = [
   { id: 'store', label: 'Store' },
   { id: 'branding', label: 'Branding' },
+  { id: 'theme', label: 'Theme' },
   { id: 'hero', label: 'Hero Slides' },
   { id: 'seo', label: 'SEO & Social' },
   { id: 'password', label: 'Security' },
 ];
+
+const THEME_GROUPS = [
+  {
+    title: 'Brand',
+    keys: [
+      { key: 'primary', label: 'Primary' },
+      { key: 'primaryDark', label: 'Primary (dark)' },
+      { key: 'primaryDeep', label: 'Primary (deep)' },
+      { key: 'primarySoft', label: 'Primary (soft)' },
+      { key: 'accent', label: 'Accent' },
+      { key: 'accentDark', label: 'Accent (dark)' },
+      { key: 'accentSoft', label: 'Accent (soft)' },
+    ],
+  },
+  {
+    title: 'Background & Surfaces',
+    keys: [
+      { key: 'bg', label: 'Page background' },
+      { key: 'bgDeep', label: 'Page background (deep)' },
+      { key: 'surface', label: 'Card / surface' },
+      { key: 'surface2', label: 'Surface (alt)' },
+    ],
+  },
+  {
+    title: 'Text',
+    keys: [
+      { key: 'ink', label: 'Primary text' },
+      { key: 'inkSoft', label: 'Secondary text' },
+      { key: 'inkMuted', label: 'Muted text' },
+    ],
+  },
+  {
+    title: 'Borders',
+    keys: [
+      { key: 'line', label: 'Border' },
+      { key: 'lineStrong', label: 'Border (strong)' },
+    ],
+  },
+  {
+    title: 'Status colors',
+    keys: [
+      { key: 'wa', label: 'WhatsApp button' },
+      { key: 'waDark', label: 'WhatsApp (dark)' },
+      { key: 'waSoft', label: 'WhatsApp (soft)' },
+      { key: 'success', label: 'Success / in stock' },
+      { key: 'successSoft', label: 'Success (soft)' },
+      { key: 'warning', label: 'Warning / low stock' },
+      { key: 'warningSoft', label: 'Warning (soft)' },
+      { key: 'danger', label: 'Danger / out of stock' },
+      { key: 'dangerSoft', label: 'Danger (soft)' },
+    ],
+  },
+];
+
+function ThemeField({ label, value, onChange }) {
+  const safeValue = HEX_COLOR_RE.test(value || '') ? value : '#000000';
+  return (
+    <div className="field">
+      <label className="field__label">{label}</label>
+      <div className="theme-field">
+        <input
+          type="color"
+          className="theme-field__swatch"
+          value={safeValue}
+          onChange={(e) => onChange(e.target.value)}
+          aria-label={`${label} color picker`}
+        />
+        <input
+          type="text"
+          className="input"
+          value={value ?? ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="#rrggbb"
+          maxLength={7}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function AdminSettingsPage() {
   const toast = useToast();
@@ -30,7 +111,10 @@ export default function AdminSettingsPage() {
     setLoading(true);
     api
       .get('/admin/settings')
-      .then((res) => setSettings(res.data))
+      .then((res) => {
+        setSettings(res.data);
+        applyTheme(res.data?.theme);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -41,12 +125,18 @@ export default function AdminSettingsPage() {
   const setNested = (objKey, key, val) =>
     setSettings((s) => ({ ...s, [objKey]: { ...(s[objKey] || {}), [key]: val } }));
 
+  const setThemeColor = (key, val) => {
+    setNested('theme', key, val);
+    applyTheme({ [key]: val });
+  };
+
   const onSave = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
       const res = await api.put('/admin/settings', settings);
       setSettings(res.data);
+      applyTheme(res.data?.theme);
       toast.success('Settings saved');
     } catch (err) {
       toast.error(err.message || 'Could not save');
@@ -60,6 +150,7 @@ export default function AdminSettingsPage() {
     try {
       const res = await api.post('/admin/settings/reset', {});
       setSettings(res.data);
+      applyTheme(res.data?.theme);
       toast.success('Restored defaults');
     } catch (e) {
       toast.error(e.message);
@@ -214,6 +305,29 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
+        {tab === 'theme' && (
+          <div style={{ marginTop: '1rem' }}>
+            <p className="field__hint" style={{ marginBottom: '1.2rem' }}>
+              Colors preview live across the site as you pick them. Click Save Changes to make them permanent, or use Defaults above to restore the original palette.
+            </p>
+            {THEME_GROUPS.map((group) => (
+              <div key={group.title} style={{ marginBottom: '1.6rem' }}>
+                <div className="section-label" style={{ marginBottom: '0.8rem' }}>{group.title}</div>
+                <div className="settings-grid">
+                  {group.keys.map(({ key, label }) => (
+                    <ThemeField
+                      key={key}
+                      label={label}
+                      value={settings.theme?.[key]}
+                      onChange={(val) => setThemeColor(key, val)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {tab === 'hero' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginTop: '1rem' }}>
             {settings.heroSlides?.map((slide, i) => (
@@ -323,7 +437,7 @@ export default function AdminSettingsPage() {
       <ConfirmDialog
         open={resetDialog}
         title="Restore defaults?"
-        text="All store settings, hero slides and social links will be replaced with defaults."
+        text="All store settings, theme colors, hero slides and social links will be replaced with defaults."
         confirmLabel="Restore"
         onConfirm={resetDefaults}
         onCancel={() => setResetDialog(false)}

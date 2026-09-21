@@ -29,9 +29,19 @@
   --warning: #c2913d;
   --warning-soft: #fbf3de;
 
-  --grad-brand: linear-gradient(125deg, #c47a8d 0%, #dd9bab 55%, #e6b79f);
-  --grad-banner: linear-gradient(120deg, #c98a99 0%, #e0b0a4 55%, #ecd1ab);
-  --grad-gold: linear-gradient(115deg, #d9a679, #efd6a8 55%, #d9a679);
+  /* Gradients are derived from the theme colors below so they stay in sync
+     when the admin changes the palette (see StoreContext.jsx applyTheme). */
+  --grad-brand: linear-gradient(125deg, var(--primary) 0%, var(--primary-dark) 55%, var(--accent) 100%);
+  --grad-banner: linear-gradient(120deg, var(--primary) 0%, var(--accent-dark) 55%, var(--accent) 100%);
+  --grad-gold: linear-gradient(115deg, var(--accent) 0%, var(--accent-soft) 55%, var(--accent) 100%);
+
+  /* R, G, B triplets for the colors above, for use in rgba(var(--x-rgb), alpha) —
+     kept in sync with the hex values above by applyTheme() in StoreContext.jsx. */
+  --bg-rgb: 253, 250, 246;
+  --primary-rgb: 196, 122, 141;
+  --primary-dark-rgb: 176, 98, 119;
+  --wa-dark-rgb: 31, 163, 91;
+  --danger-rgb: 213, 122, 109;
 
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -197,11 +207,11 @@ h1, h2, h3, h4 {
 .btn--primary {
   background: var(--grad-brand);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(196, 122, 141, 0.28);
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.28);
 }
 .btn--primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(99, 22, 32, 0.28);
+  box-shadow: 0 10px 24px rgba(var(--primary-dark-rgb), 0.35);
 }
 
 .btn--dark { background: var(--ink); color: #fff; }
@@ -223,7 +233,7 @@ h1, h2, h3, h4 {
 .btn--whatsapp { background: var(--wa); color: #fff; }
 .btn--whatsapp:hover:not(:disabled) {
   background: var(--wa-dark);
-  box-shadow: 0 6px 18px rgba(31, 170, 89, 0.3);
+  box-shadow: 0 6px 18px rgba(var(--wa-dark-rgb), 0.3);
 }
 
 .btn--ghost { background: transparent; color: var(--ink); }
@@ -267,7 +277,7 @@ h1, h2, h3, h4 {
 .input:focus, .select:focus, .textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(196, 122, 141, 0.18);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.18);
 }
 
 .textarea { resize: vertical; min-height: 110px; }
@@ -294,7 +304,7 @@ input[type='checkbox'] {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: rgba(253, 250, 246, 0.94);
+  background: rgba(var(--bg-rgb), 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
@@ -341,7 +351,7 @@ input[type='checkbox'] {
   color: #fff;
   font-size: 0.95rem;
   flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(196, 122, 141, 0.32);
+  box-shadow: 0 3px 10px rgba(var(--primary-rgb), 0.32);
 }
 
 .brand__logo {
